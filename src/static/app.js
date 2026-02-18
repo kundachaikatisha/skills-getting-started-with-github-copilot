@@ -47,7 +47,33 @@ document.addEventListener("DOMContentLoaded", () => {
           const ul = document.createElement("ul");
           members.forEach((member) => {
             const li = document.createElement("li");
-            li.textContent = member;
+
+            const span = document.createElement("span");
+            span.textContent = member;
+            li.appendChild(span);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.title = "Unregister";
+            deleteBtn.innerHTML = "&#x1f5d1;";
+            deleteBtn.addEventListener("click", async () => {
+              try {
+                const res = await fetch(
+                  `/activities/${encodeURIComponent(name)}/unregister?email=${encodeURIComponent(member)}`,
+                  { method: "DELETE" }
+                );
+                const data = await res.json();
+                if (res.ok) {
+                  loadActivities();
+                } else {
+                  alert(data.detail || "Failed to unregister.");
+                }
+              } catch (err) {
+                alert("An error occurred. Please try again.");
+              }
+            });
+            li.appendChild(deleteBtn);
+
             ul.appendChild(li);
           });
           participantsDiv.appendChild(ul);
